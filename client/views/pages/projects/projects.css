@@ -1,0 +1,8 @@
+.scroll-div {
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.withoutmargin{
+    padding-bottom: 1px!important;
+}

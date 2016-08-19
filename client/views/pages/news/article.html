@@ -1,0 +1,30 @@
+<template name="article">
+
+    <!-- Page heading -->
+    {{> pageHeading title='' category='App views' }}
+
+    <div class="wrapper wrapper-content  animated fadeInRight article">
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="text-center ">
+                            <span class="text-muted"><i class="fa fa-clock-o"></i>{{pubDate this.created_at}}</span>
+
+                            <h1>
+                                {{this.newsName}}
+                            </h1>
+                        </div>
+                        <p>
+                            {{this.newsContent}}
+                        </p>
+                        <div class="hr-line-dashed"></div>
+                       <i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</template>

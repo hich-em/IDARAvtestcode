@@ -1,0 +1,50 @@
+<template name="topNavbar">
+    <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <a id="navbar-minimalize" class="minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <span class="m-r-sm text-muted welcome-message"> Bienvenue à IDARA.</span>
+                </li>
+              {{#if isnAdmin}}
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" id="notificationseen" data-toggle="dropdown" href="#">
+                        <i class="fa fa-bell"></i>  <span class="label label-warning">{{numbernotificationNotSeen}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        {{#each notifications}}
+                        <li>
+                                
+                                <div>
+                                   <i class="fa fa-bell"></i> {{getExpert text}}...
+                                    <span class="pull-right text-muted small">{{pubDate created_at}}</span>
+                                </div>
+                        
+                        </li>
+                         {{/each}}
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center link-block">
+                                <a href="{{pathFor route='notifications'}}">
+                                    <strong>Voir tout</strong>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                </li>
+                {{/if}}
+
+                <li>
+                    <a href="{{pathFor route='user.logout'}}">
+                        <i class="fa fa-sign-out"></i> Se déconnecter
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+    </div>
+</template>

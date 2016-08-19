@@ -1,0 +1,45 @@
+<template name="questionlistcr">
+
+    <!-- Page heading -->
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+ {{#each questions}}
+        <div class="ibox collapsed">
+            <div class="ibox-title">
+                <h5>{{text}}</h5>
+                {{>iboxTools2}}
+            </div>
+            <div class="ibox-content">
+                <p>
+                    {{description}}
+                    </p>
+                     {{#if fileExiste media}}
+                    <h5>Fichier</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+
+                      {{#if repexist _id}}
+                      {{#with answer _id}}
+                    <h5>Answer</h5>
+                      <p>
+                    {{reponse}}
+                    {{#if fileExiste media}}
+                    <h5>Fichier</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                    </p>
+                    {{/with}}
+                  {{/if}}
+  
+            </div>
+        </div>
+ {{/each}}
+
+
+    </div>
+  
+</template>

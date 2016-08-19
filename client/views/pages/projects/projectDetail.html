@@ -1,0 +1,420 @@
+<template name="projectDetail">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Détails du projet' category='App views' }}
+    {{#with this}}
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="wrapper wrapper-content animated fadeInUp">
+            
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    
+                                    
+                                    <div class="m-b-md">
+                                     
+                                            <div class="ibox-tools">
+                                                   {{#if isStudentorTeacher}}
+                                                <a href=""  data-toggle="modal" data-target="#newtaskForm" class="btn btn-primary btn-xs pull-right">Créer une tache</a>
+                                                     {{#if isTeacher}}
+                                                <a href=""  data-toggle="modal" data-target="#percentForm" class="btn btn-white btn-xs pull-right">Changer le pourcentage</a>
+                                                     {{/if}}
+                                                 {{/if}}
+                                                     {{#if isAdmin}}
+                                                         {{#if juriesNotExiste juries}}
+                                                     <a href=""  data-toggle="modal" data-target="#percentForm" class="btn btn-primary btn-xs pull-right">Affecter les membres des juries</a>
+                                                     {{/if}}
+                                                     {{/if}}
+                                            </div>
+                                       
+                                        <h2>{{name}}</h2>
+                                    </div>
+                                    <dl class="dl-horizontal">
+                                        <dt>Statut:</dt> <dd><span class="label {{colorStatus status}}">{{textStatus status}}</span></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <dl class="dl-horizontal">
+
+                                        <dt>Créé par:</dt> <dd>{{teacherName supervisor}}</dd>
+                                        <dt>Jurys:</dt><dd class="project-people">
+                                             {{#if juriesExiste juries}}
+                                            {{studentsName juries}}
+                                            {{/if}}
+                                        </dd>
+                                        <dt>Date de soutenance:</dt><dd class="project-people">
+                                             {{#if soutenanceExiste soutenance}}
+                                            {{pubDatefr soutenance}}
+                                            {{/if}}
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="col-lg-7" id="cluster_info">
+                                    <dl class="dl-horizontal" >
+
+                                        <dt>Dernière mise à jour:</dt> <dd>{{pubDate this.last_modified_at}}</dd>
+                                        <dt>Créé:</dt> <dd>{{pubDate this.created_at}}</dd>
+                                        <dt>Participants:</dt>
+                                        <dd class="project-people">
+                                            {{studentsName students}}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <dl class="dl-horizontal">
+                                        <dt>Terminé: {{status}}% </dt>
+                                        <dd>
+                                            <div class="progress progress-striped active m-b-sm">
+                                                <div style="width: {{status}}%;" class="progress-bar"></div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="row m-t-sm">
+                                <div class="col-lg-12">
+                                    <div class="panel blank-panel">
+                                        <div class="panel-heading">
+                                            <div class="panel-options">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a href="#tab-1" data-toggle="tab">Chat</a></li>
+                                                    <li class=""><a href="#tab-2" data-toggle="tab">Les taches</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="panel-body">
+
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="tab-1">
+                                                    <div class="feed-activity-list scroll-div">
+                                                        {{#each messages}}
+                                                        <div class="feed-element">
+                                                            <a href="#" class="pull-left">
+                                                               {{userName sender}}
+                                                            </a>
+                                                            <div class="media-body ">
+                                                                <small class="text-muted">{{pubDate created_at}}</small>
+                                                                <div class="well">
+                                                                    {{content}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {{/each}}
+                                                        
+                                                      
+                                                    </div>
+                                                      {{#if isStudentorTeacher}}
+                                                            {{#autoForm collection="Messages" id="insertMessageForm" doc=this type="insert" resetOnSuccess=true preserveForm=false}}
+                                                                    <div class="form-group">
+                                                                        {{> afQuickField name='content'}}
+                                                                        {{> afQuickField name='project' value=_id}}
+                                                                    </div>
+                                                                    <button type="submit"  class="btn btn-primary btn-xs pull-right">Envoyer</button>
+                                                            {{/autoForm}}
+                                                        {{/if}}
+
+                                                </div>
+                                                <div class="tab-pane" id="tab-2">
+
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Statut</th>
+                                                            <th>Titre</th>
+                                                            <th>Créé le</th>
+                                                            <th>Date limite</th>
+                                                            <th>Description</th>
+                                                                  {{#if isStudentorTeacher}}
+                                                            <th>Actions</th>
+                                                             {{/if}} 
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                          {{#each tasks}}  
+                                                        <tr>
+                                                            <td>
+                                                                 {{#if isStudentorTeacher}}
+                                                                {{> task_status disable_task_status=this.finished id=this._id}}
+                                                                {{else}}<span class="label {{statusClasslable this.finished}}">{{textStatus this.finished}}</span>
+                                                                  {{/if}}
+                                                            </td>
+                                                            <td>
+                                                                {{name}}
+                                                            </td>
+                                                            <td>
+                                                                {{pubDate created_at}}
+                                                            </td>
+                                                            <td>
+                                                                {{pubDatefr deadline}}
+                                                            </td>
+                                                            <td>
+                                                                <p class="small">
+                                                                   {{description}}
+                                                                </p>
+                                                            </td>
+                                                             {{#if isStudentorTeacher}}
+                                                            <td>
+                                                                
+                                                                <a href="{{pathFor route='projects.taskdelete'}}" data-id="{{_id}}" class="btn btn-danger btn-sm deletetask"><i class="fa fa-trash"></i></a>
+                                                                <a href="{{pathFor route='projects.task'}}"  data-id="{{_id}}"  class="btn btn-success btn-sm edittask"><i class="fa fa-search"></i></a>
+                                                                 
+                                                            </td>  
+                                                             {{/if}}                                  
+                                                        </tr>
+                                                        {{/each}}
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="wrapper wrapper-content project-manager">
+                    <h4>Description du projet</h4>
+                    <p class="small">
+                        {{description}}
+                    </p>
+                    {{#if fileExiste media}}
+                    <h5>Fichier du projet</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                      <div class="hr-line-dashed"></div>
+                         <h4>Rapport</h4>
+                      {{#if reportExiste _id}}
+                       {{#with report _id}}
+                 
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/with}}
+                      {{/if}}
+                       {{#if isStudent}}
+
+                      {{#if reportnotExiste _id}}
+
+                        {{#autoForm collection="Rapports" id="addReport" type="insert" resetOnSuccess=true preserveForm=false}}
+                        <div class="form-group">
+                            {{> afQuickField name='project' value=_id}}
+                            {{> afQuickField name='media'}}
+                        </div>
+                         <button type="submit"  class="btn btn-primary btn-xs">Enregistrer</button>
+                {{/autoForm}}
+                      {{/if}}
+                        {{/if}}
+                </div>
+            </div>
+        </div>
+
+{{#if isStudentorTeacher}}
+    <div class="modal inmodal" id="newtaskForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'une tache</h4>
+                </div>
+                {{#autoForm collection="Tasks" id="insertTaskForm" type="insert"  resetOnSuccess=true preserveForm=false}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='name'}}
+                            {{> afQuickField name='description'}}
+                            {{> afQuickField name='deadline'}}
+                             {{> afQuickField name='project' value=_id}}
+                             {{> afQuickField name='media'}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+    <div class="modal inmodal" id="taskForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                 {{#with thisTask taskId}}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">{{name}} ({{statusText finished}})</h4>
+                </div>
+                 <div class="modal-body withoutmargin">
+                <p><strong>Date limite:</strong> {{pubDatefr deadline}} <br>
+                    <strong>Description:</strong> {{description}}<br>
+                    {{#if fileExiste media}}
+                    <h5>Fichiers</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                    </p>
+                      <div class="hr-line-dashed"></div>
+                    </div>
+                 {{/with}}
+               
+                 <div class="modal-body">
+                     
+                       <div class="feed-activity-list scroll-div">
+                {{#each taskcomments}}
+                    <div class="feed-element">
+                        <a href="#" class="pull-left">
+                            {{userName created_by}}
+                        </a>
+                        <div class="media-body ">
+                            <small class="text-muted">{{pubDate created_at}}</small>
+                            <div class="well">
+                                {{description}}
+                                {{#if fileExiste media}}
+                 
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            
+                </div>
+                    <div class="hr-line-dashed"></div>
+                {{#autoForm collection="TaskComments" id="insertTaskCommentForm" type="insert"  resetOnSuccess=true preserveForm=false}}
+                        <div class="form-group">
+                            {{> afQuickField name='description'}}
+                            {{> afQuickField name='taskid' value=taskId}}
+                             {{> afQuickField name='media'}}
+                        </div>
+                        <button type="submit"  class="btn btn-primary btn-xs pull-right">Envoyer</button>
+                        {{/autoForm}}
+                 </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addCommentClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+     {{/if}}
+         {{#if isAdminorTeacher}}
+    <div class="modal inmodal" id="percentForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Modification d'un projet</h4>
+                </div>
+                {{#autoForm collection="Projects" doc=this id="updateExistingpercentProjectForm" type="update"}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{#if isTeacher}}
+                            {{> afQuickField name='status'}}
+                             {{/if}}
+                            {{#if isAdmin}}
+                                {{#if juriesNotExiste juries}}
+                                 {{> afQuickField name='juries'  isReactiveOptions=true}}
+                             
+                                 
+                                 {{/if}}
+                                 <!--TODO-->
+                                 {{#if soutenancenotExiste soutenance}}
+                                         {{> afQuickField name='soutenance'}}
+                                            {{/if}}
+                                   {{/if}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="closepercentForm" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+     {{/if}}
+      
+
+         {{/with}}
+
+         
+
+</template>
+
+<template name="task_status">
+    <button type="button" class="btn btn-xs {{statusClass disable_task_status}}" id="status">{{statusText disable_task_status}}</button>
+
+</template>
+
+<template name="myFilePreview3">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate3">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>
+
+<template name="myFilePreview6">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate6">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>

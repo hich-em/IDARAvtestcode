@@ -1,0 +1,71 @@
+<template name="notifications">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Notifications' category='UI Elements' }}
+    <div class="ibox search">
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-11">
+                    <div class="input-group">
+                        <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                    </div>
+                </div>
+                {{#if isAdmin}}
+                <div class="action col-md-1">
+                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#newNotificationForm"><i class="fa fa-plus" aria-hidden="true"></i>Ajouter</button>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="container">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Notifications</h5>
+                   
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            {{#each notifications showExtraFields}}
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    {{text}}.
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+          
+        </div>
+
+    </div>
+
+    {{#if isAdmin}}
+    <div class="modal inmodal" id="newNotificationForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'une nouvelle notification</h4>
+                </div>
+                {{#autoForm collection="Notifications" id="insertNotificationForm" type="insert" resetOnSuccess=true preserveForm=false}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='text'}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+     {{/if}}
+</template>

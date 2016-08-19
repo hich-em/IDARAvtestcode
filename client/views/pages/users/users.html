@@ -1,0 +1,204 @@
+<template name="users">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Liste des utilisateurs' category='App views' }}
+    
+     <div class="ibox search">
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-7">
+                    <div class="input-group">
+                        <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label> <input type="radio" id="all" value="all" name="a" class="i-checks"> <i></i> Tous </label>
+                    <label> <input type="radio" id="student" value="student" name="a" class="i-checks"> <i></i> Étudiants </label>
+                    <label> <input type="radio" id="teacher" value="teacher" name="a" class="i-checks"> <i></i> Professeurs </label>
+                    <label> <input type="radio" id="admin" value="admin" name="a" class="i-checks"> <i></i> Admins </label>
+                </div>
+                {{#if isAdmin}}
+                <div class="action col-md-1">
+                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#newUserForm"><i class="fa fa-plus" aria-hidden="true"></i>Ajouter</button>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+             {{#each users showExtraFields}}
+            <div class="col-md-3">
+                <div class="contact-box center-version">
+
+                    <a >
+                        <h3 class="m-b-xs"><strong>{{username}}</strong></h3>
+
+                        <div class="font-bold">{{profile.firstName}} {{profile.lastName}}</div>
+                        <address class="m-t-md">
+                            <strong>
+                                {{#if isanAdmin _id}}
+                                    Admin
+                                {{/if}}
+                                {{#if isaTeacher _id}}
+                                    Professeur
+                                {{/if}}
+                                {{#if isaStudent _id}}
+                                    Étudiant
+                                {{/if}}
+                            </strong><br>
+                            {{emails.[0].address}}<br>
+                        </address>
+
+                    </a>
+                    <div class="contact-box-footer">
+                        <div class="m-t-xs btn-group">
+                            <a href="{{pathFor route='users.delete'}}" class="btn btn-danger btn-xs">Supprimer</a>
+                            {{#if isaStudent _id}}
+                                <a href="{{pathFor route='users.edit'}}" class="editstudent btn btn-success btn-xs">Modifier</a>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+              {{/each}}
+        </div>
+    </div>
+
+     {{#if isAdmin}}
+    <div class="modal inmodal" id="newUserForm" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'un utilisateur</h4>
+                </div>
+               <form id="insertUserForm" class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="username">Nom d'utilisateur</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="username" placeholder="Nom d'utilisateur" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="password">Mot de passe</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" id="password" placeholder="Mot de passe" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="email">E-mail</label>
+                                <div class="col-sm-10">
+                                    <input type="email" class="form-control" id="email" placeholder="E-mail" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="role">Rôle</label>
+                                <div class="col-sm-10">
+                                    <select data-placeholder="Selectionez le Rôle" id="role" style="width:100%" class="chosen-select" tabindex="2" required>
+                                        <option selected disabled></option>
+                                        <option value="admin">Admin</option>
+                                        <option value="teacher">Professeur</option>
+                                        <option value="student">Étudiant</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="firstName">Prénom</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="firstName" placeholder="Prénom">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="lastName">Nom</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="lastName" placeholder="Nom">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="gender">Genre</label>
+                                <div class="col-sm-10">
+                                    <select data-placeholder="Selectionez le sexe" id="gender" style="width:100%" class="chosen-select" tabindex="2" required>
+                                        <option selected disabled></option>
+                                        <option value="male">Masculin</option>
+                                        <option value="female">Féminin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="birthday">Date d'anniversaire</label>
+                                <div class="col-sm-10">
+                                    <input type="date" class="form-control" id="birthday" placeholder="Date d'anniversaire">
+                                </div>
+                            </div>
+                            {{#if studentfield usertype}}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="currentclass">Classe</label>
+                                <div class="col-sm-10">
+                                     
+                                    <select data-placeholder="Selectionez la classe" id="currentclass" style="width:100%" class="chosen-select" tabindex="2" required>
+                                        <option selected disabled></option>
+                                        {{#each classes}}
+                                        <option value="{{_id}}">{{className}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            {{/if}}
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="button" id="adduser" class="btn btn-primary">Enregistrer</button>
+                    </div>
+               </form>
+            </div>
+        </div>
+    </div>
+     {{/if}}
+
+
+     {{#if isAdmin}}
+    <div class="modal inmodal" id="updateUserForm" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Modification d'un utilisateur</h4>
+                </div>
+               <form id="insertUserForm" class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="editcurrentclass">Classe</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="studentid" value="{{this}}" hidden>
+                                    <select data-placeholder="Selectionez la classe" id="editcurrentclass" style="width:100%" class="chosen-select" tabindex="2" required>
+                                        <option selected disabled></option>
+                                        {{#each classes}}
+                                        <option value="{{_id}}">{{className}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="updateClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="button" id="updateuser" class="btn btn-primary">Enregistrer</button>
+                    </div>
+               </form>
+            </div>
+        </div>
+    </div>
+     {{/if}}
+</template>

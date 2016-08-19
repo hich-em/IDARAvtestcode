@@ -1,0 +1,162 @@
+<template name="projects">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Projets' category='App views' }}
+
+    <div class="wrapper wrapper-content animated fadeInUp">
+
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Tous les projets</h5>
+                {{#if isAdminorTeacher}}
+                    <div class="ibox-tools">
+                        <a href=""  data-toggle="modal" data-target="#newProjectForm" class="btn btn-primary btn-xs">Créer un nouveau projet</a>
+                    </div>
+                {{/if}}
+            </div>
+            <div class="ibox-content">
+                <div class="row m-b-sm m-t-sm">
+                    <div class="col-md-11">
+                        <div class="input-group">
+                            <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                            <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-list">
+
+                    <table class="table table-hover">
+                        <tbody>
+                        {{#each projects showExtraFields}}
+                            <tr>
+                                <td class="project-status">
+                                    <span class="label {{colorStatus status}}">{{textStatus status}}</span>
+                                </td>
+                                <td class="project-title">
+                                    <a href="{{pathFor route='projects.view'}}">{{name}}</a>
+                                    <br/>
+                                    <small>{{pubDate this.created_at}}</small>
+                                </td>
+                                <td class="project-completion">
+                                    <small>{{status}}%</small>
+                                    <div class="progress progress-mini">
+                                        <div style="width: {{status}}%;" class="progress-bar"></div>
+                                    </div>
+                                </td>
+                                <td class="project-people">
+                                    {{teacherName supervisor}}
+                                </td>
+                                <td class="project-people">
+                                     {{#if noStudent students}}
+                                     {{else}}
+                                    {{studentsName students}}
+                                    {{/if}}
+                                </td>
+                                <td class="project-actions">
+                                    {{#if isTeacher}}
+                                    {{#if noStudent students}}
+                                       <a href="{{pathFor route='projects.student'}}" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> Assigner des étudiants </a>
+                                    {{/if}}
+                                    {{/if}}
+                                     {{#if isAdminorTeacher}}
+                                    <a href="{{pathFor route='projects.edit'}}" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> Modification </a>
+                                    <a href="{{pathFor route='projects.delete'}}" class="btn btn-danger btn-sm"><i class="fa fa-pencil"></i> Suppression </a>
+                                     {{/if}}
+                                </td>
+                            </tr>
+                         {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{#if isAdminorTeacher}}
+    <div class="modal inmodal" id="newProjectForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'un nouveau projet</h4>
+                </div>
+                {{#autoForm collection="Projects" id="insertProjectForm" type="insert" resetOnSuccess=true preserveForm=false}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='name'}}
+                            {{> afQuickField name='description'}}
+                            {{#if isAdmin}}
+                            {{> afQuickField name='supervisor'  isReactiveOptions=true}}
+                             {{/if}}
+                             {{#if isTeacher}}
+                            {{> afQuickField name='students'  isReactiveOptions=true}}
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+     {{/if}}
+     {{#if isAdminorTeacher}}
+    <div class="modal inmodal" id="updateProjectForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Modification d'un projet</h4>
+                </div>
+                {{#autoForm collection="Projects" doc=this id="updateExistingProjectForm" type="update"}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='description' isReactiveOptions=true}}
+                            {{> afQuickField name='media' isReactiveOptions=true}}
+                             {{#if noStudent this.students}}
+                            {{> afQuickField name='students'  isReactiveOptions=true}}
+                             {{/if}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="updateClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+     {{/if}}
+    
+</template>
+
+
+<template name="myFilePreview2">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate2">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>

@@ -1,0 +1,103 @@
+<template name="questionlist">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Mes questions' category='App views' }}
+     <div class="ibox search">
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-11">
+                    <div class="input-group">
+                        <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                    </div>
+                </div>
+                {{#if isTeacher}}
+                <div class="action col-md-1">
+                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#newQuestionForm"><i class="fa fa-plus" aria-hidden="true"></i>Ajouter</button>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+ {{#each questions showExtraFields}}
+        <div class="ibox collapsed">
+            <div class="ibox-title">
+                <h5>{{text}}</h5>
+                {{>iboxTools2}}
+            </div>
+            <div class="ibox-content">
+                <p>
+                    {{description}}
+                    </p>
+                     {{#if fileExiste media}}
+                    <h5>Fichier du projet</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                
+            </div>
+        </div>
+ {{/each}}
+
+
+    </div>
+     {{#if isTeacher}}
+    
+ <div class="modal inmodal" id="newQuestionForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'une Question</h4>
+                </div>
+                {{#autoForm collection="Questions" id="insertQuestinForm" doc=this type="insert" resetOnSuccess=true preserveForm=false}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='text'}}
+                            {{> afQuickField name='description'}}
+                            {{> afQuickField name='tp' value=this._id}}
+                            {{> afQuickField name='media'}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</template>
+
+<template name="myFilePreview4">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate4">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>

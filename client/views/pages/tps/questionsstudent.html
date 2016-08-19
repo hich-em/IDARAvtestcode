@@ -1,0 +1,86 @@
+<template name="questionliststuednt">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Mes questions' category='App views' }}
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+ {{#each questions}}
+        <div class="ibox collapsed">
+            <div class="ibox-title">
+                <h5>{{text}}</h5>
+                {{>iboxTools2}}
+            </div>
+            <div class="ibox-content">
+                <p>
+                    {{description}}
+                    </p>
+                     {{#if fileExiste media}}
+                    <h5>Fichier</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+
+                      {{#if repexist _id}}
+                      {{#with answer _id}}
+                    <h5>Answer</h5>
+                      <p>
+                    {{reponse}}
+                    {{#if fileExiste media}}
+                    <h5>Fichier</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                    </p>
+                    {{/with}}
+                  {{/if}}
+            {{#if repnotexist _id}}
+                    <h5>Answer</h5>
+                      <p>
+                    {{#autoForm collection="Answers" id="insertQuestinForm" type="insert" resetOnSuccess=true preserveForm=false}}
+                        <div class="form-group">
+                            {{> afQuickField name='reponse'}}
+                            {{> afQuickField name='question' value=_id}}
+                            {{> afQuickField name='media'}}
+                        </div>
+                         <button type="submit"  class="btn btn-primary btn-xs">Enregistrer</button>
+                {{/autoForm}}
+                    </p>
+                  {{/if}}
+            </div>
+        </div>
+ {{/each}}
+
+
+    </div>
+  
+</template>
+
+<template name="myFilePreview5">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate5">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>

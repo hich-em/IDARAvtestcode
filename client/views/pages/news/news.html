@@ -1,0 +1,128 @@
+<template name="news">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Actualités' category='App views' }}
+    <div class="ibox search">
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-11">
+                    <div class="input-group">
+                        <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                    </div>
+                </div>
+                {{#if isAdmin}}
+                <div class="action col-md-1">
+                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#newNewsForm"><i class="fa fa-plus" aria-hidden="true"></i>Ajouter</button>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="wrapper wrapper-content animated fadeInRight blog">
+        <div class="row">
+            {{#each news showExtraFields}}
+            <div class="col-md-4">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <a href="{{pathFor route='news.article'}}" class="btn-link">
+                            <h3>
+                                {{newsName}}
+                            </h3>
+                        </a>
+                        <div class="small m-b-xs">
+                            <span class="text-muted"><i class="fa fa-clock-o"></i> {{pubDate created_at}}</span>
+                        </div>
+                        {{#if isAdmin}}
+                        <div class="row">
+                            <div class="col-md-6 pull-right">
+                                <a href="{{pathFor route='news.delete'}}" class="btn btn-danger btn-xs">Supprimer</a>
+                                <a href="{{pathFor route='news.edit'}}" class="btn btn-success btn-xs">Modifier</a>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+              
+            </div>
+            {{/each}}
+        </div>
+    </div>
+{{#if isAdmin}}
+    <div class="modal inmodal" id="newNewsForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ajout d'un nouveau article</h4>
+                </div>
+                {{#autoForm collection="News" id="insertNewsForm" type="insert" resetOnSuccess=true preserveForm=false}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='newsName'}}
+                            {{> afQuickField name='newsContent'}}
+                            {{> afQuickField name='media'}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addClose" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal inmodal" id="updateNewsForm" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Modification Article</h4>
+                </div>
+                {{#autoForm collection="News" id="updateExistingNewsForm" doc=this type="update"}}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{> afQuickField name='newsName'}}
+                            {{> afQuickField name='newsContent'}}
+                            {{> afQuickField name='media'}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" id="updateClose">Fermer</button>
+                        <button type="submit"  class="btn btn-primary">Enregistrer</button>
+                    </div>
+                {{/autoForm}}
+            </div>
+        </div>
+    </div>
+       {{/if}}
+</template>
+
+<template name="myFilePreview">
+    <a href="{{file.url}}" target="_blank">{{file.name}}</a>
+</template>
+
+<template name="myUploadProgressTemplate">
+  {{#with getAttsAndFileObj this ..}}
+  {{#if this.useBootstrap}}
+  <div class="progress">
+  	<div {{this.atts}}>
+        {{#if this.showPercent}}
+        {{this.progress}}%
+        {{else}}
+	    <span class="sr-only">{{this.progress}}% Complete</span>
+        {{/if}}
+    </div>
+  </div>
+  {{else}}
+  {{#if this.useSemantic}}
+  <div {{this.atts}}>
+    <div class="bar" style="width: {{this.progress}}%"></div>
+  </div>
+  {{else}}
+  <progress value="{{this.progress}}" max="100" {{this.atts}}>{{this.progress}}%</progress>
+  {{/if}}
+  {{/if}}
+  {{/with}}
+</template>

@@ -1,0 +1,99 @@
+<template name="projectsJuries">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Projets' category='App views' }}
+
+    <div class="wrapper wrapper-content animated fadeInUp">
+
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Tous les projets</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row m-b-sm m-t-sm">
+                    <div class="col-md-11">
+                        <div class="input-group">
+                            <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                            <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-list">
+
+                    <table class="table table-hover">
+                        <tbody>
+                        {{#each projects showExtraFields}}
+                            <tr>
+                                <td class="project-status">
+                                    <span class="label {{colorStatus status}}">{{textStatus status}}</span>
+                                </td>
+                                <td class="project-title">
+                                   {{name}}
+                                    <br/>
+                                    <small>{{pubDate this.created_at}}</small>
+                                </td>
+                                <td >
+                                    <small>{{status}}%</small>
+                                    <div class="progress progress-mini">
+                                        <div style="width: {{status}}%;" class="progress-bar"></div>
+                                    </div>
+                                </td>
+                                <td >
+                                    {{teacherName supervisor}}
+                                </td>
+                                <td >
+                                    {{studentsName students}}
+                                </td>
+                                  
+                 
+                    
+                              
+                                <td >
+                                    <a href="{{pathFor route='projects.details'}}" class="btn btn-white btn-sm"><i class="fa fa-search"></i>Détails</a>
+                                </td>
+                            </tr>
+                         {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+   <div class="modal inmodal" id="projectdetails" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Détails du projet</h4>
+                </div>
+                    <div class="modal-body">
+                        <div class="feed-element">
+                            <div class="media-body ">
+                                <div class="well">
+                                        <h4>Description:</h4>
+                                    {{this.description}}
+                                    {{#if fileExiste this.media}}
+                    <h5>Fichiers</h5>
+                    <ul class="list-unstyled project-files">
+                        <li><i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a></li>
+                    </ul>
+                      {{/if}}
+                       {{#if reportExiste this._id}}
+                       <div class="hr-line-dashed"></div>
+                        <h4>Report:</h4>
+                       {{#with report this._id}}
+                                   <i class="fa fa-file" aria-hidden="true"></i> <a href="/cfs/files/images/{{media}}/" target="_blank">{{fileName media}}</a>
+                                     {{/with}}
+                      {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="closedetails" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</template>

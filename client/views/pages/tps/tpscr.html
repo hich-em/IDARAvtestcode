@@ -1,0 +1,33 @@
+<template name="tpscr">
+
+    <!-- Page heading -->
+    {{> pageHeading title='Mes TPs' category='App views' }}
+     <div class="ibox search">
+        <div class="ibox-content">
+            <div class="row m-b-sm m-t-sm">
+                <div class="col-md-11">
+                    <div class="input-group">
+                        <input type="text" placeholder="Rechercher" class="input-sm form-control" id="searchtext"> <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-primary" id="searchbtn">Rechercher</button> </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+ {{#each tps showExtraFields}}
+        <div class="vote-item">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{pathFor route='crs.studentcr'}}" class="vote-title">
+                       {{name}} <span class="pull-right">{{pubDate deadline}}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+ {{/each}}
+    </div>
+</template>
