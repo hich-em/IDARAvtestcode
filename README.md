@@ -1,3 +1,3 @@
 # IDARAvtestcode
-
-Meteor JS 
+Mini - School projects manger 
+Meteor JS, Node Js  
